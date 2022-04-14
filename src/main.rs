@@ -11,12 +11,9 @@ fn main() {
 
 	loop {
 		match stdin.read_line(&mut buf) {
-			Ok(0) => break,    // EOF
-			Ok(1) => continue, // blank line
-			Ok(len) => {
-				let now = Local::now();
-				println!("{} {}", now.format(&format), &buf[..len - 1]); // strip trailing newline
-			}
+			Ok(0) => break,                                                              // EOF
+			Ok(1) => continue,                                                           // blank line
+			Ok(len) => println!("{} {}", Local::now().format(&format), &buf[..len - 1]), // strip trailing newline
 			Err(e) => panic!("Error writing: {:?}", e),
 		}
 		buf.clear();
