@@ -8,4 +8,3 @@ license = "MIT"
 
 [dependencies]
 chrono = "0.4"
-ctrlc = "3.2.1"

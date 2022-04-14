@@ -1,17 +1,7 @@
-use std::{
-	env,
-	io::{self, Write},
-	process,
-};
+use std::{env, io};
 
 use chrono::Local;
 fn main() {
-	ctrlc::set_handler(|| {
-		io::stdout().flush().expect("Error flushing stdout");
-		process::exit(0);
-	})
-	.expect("Error setting exit handler!");
-
 	let mut args = env::args();
 	let _ = args.next(); // program name
 	let format = args.next().unwrap_or("[%H:%M:%S]".to_string());
@@ -19,10 +9,15 @@ fn main() {
 	let mut buf = String::new();
 	let stdin = io::stdin();
 
-	while let Ok(len) = stdin.read_line(&mut buf) {
-		let now = Local::now();
-		if len > 1 {
-			println!("{} {}", now.format(&format), &buf[..len - 1]);
+	loop {
+		match stdin.read_line(&mut buf) {
+			Ok(0) => break,    // EOF
+			Ok(1) => continue, // blank line
+			Ok(len) => {
+				let now = Local::now();
+				println!("{} {}", now.format(&format), &buf[..len - 1]); // strip trailing newline
+			}
+			Err(e) => panic!("Error writing: {:?}", e),
 		}
 		buf.clear();
 	}
